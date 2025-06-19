@@ -1,594 +1,546 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>واجهة البرنامج</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      background: #f0f0f0;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
-    }
-    h1, h2, h4 {
-      color: #333;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-    .btn {
-      background: #007bff;
-      color: white;
-      padding: 20px;
-      border-radius: 15px;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    .btn:hover {
-      background: #0056b3;
-    }
-    .section {
-      display: none;
-      margin-top: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      text-align: right;
-    }
-    .active {
-      display: block !important;
-    }
-    input, select {
-      padding: 8px;
-      margin: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      padding: 8px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-    th {
-      background-color: #f2f2f2;
-    }
-    @media print {
-      .no-print {
-        display: none;
-      }
-      #printArea {
-        display: block !important;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BAZAR SERDANI - نظام إدارة المخزون</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            background-color: #34495e;
+        }
+        
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 15px 20px;
+            display: block;
+            transition: background-color 0.3s;
+        }
+        
+        .nav-menu a:hover {
+            background-color: #3d566e;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .section {
+            display: none;
+            margin-bottom: 30px;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        /* تصميم الباركود */
+        .barcode-label {
+            width: 30mm;
+            height: 20mm;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed #ccc;
+            margin: 5px;
+            padding: 2px;
+            text-align: center;
+            font-size: 10px;
+        }
+        
+        .barcode-img {
+            max-width: 28mm;
+            max-height: 15mm;
+            object-fit: contain;
+        }
+        
+        .barcode-container {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        /* جدول المنتجات */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        th {
+            background-color: #f2f2f2;
+        }
+        
+        /* تعديلات الطباعة */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .barcode-section, .barcode-section * {
+                visibility: visible;
+            }
+            .barcode-section {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+            }
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<h1>📋 واجهة إدارة المتجر - BAZAR SERDANI</h1>
-
-<div class="grid">
-  <button class="btn" onclick="showSection('add')">➕ إضافة منتج</button>
-  <button class="btn" onclick="showSection('stock')">📦 المخزون</button>
-  <button class="btn" onclick="showSection('sell')">🛒 البيع</button>
-  <button class="btn" onclick="showSection('return')">🔁 الإرجاع</button>
-  <button class="btn" onclick="showSection('clients')">👥 الزبائن والديون</button>
-  <button class="btn" onclick="showSection('stats')">📊 الإحصائيات</button>
-  <button class="btn" onclick="showSection('print')">🖨️ الطباعة</button>
-</div>
-
-<!-- قسم إضافة منتج -->
-<div id="add" class="section">
-  <h2>➕ إضافة منتج جديد</h2>
-  <form id="productForm">
-    <label>📦 اسم المنتج:<br><input type="text" id="productName" required></label><br><br>
-    <label>💰 سعر الشراء:<br><input type="number" id="buyPrice" required></label><br><br>
-    <label>💵 سعر البيع:<br><input type="number" id="sellPrice" required></label><br><br>
-    <label>📦 الكمية:<br><input type="number" id="quantity" required></label><br><br>
-    <label>🔢 الباركود (يُولد تلقائيًا إذا ترك فارغًا):<br><input type="text" id="barcode"></label><br><br>
-    <button type="submit">📥 حفظ المنتج</button>
-  </form>
-  <p id="addProductMsg" style="color: green; font-weight: bold;"></p>
-</div>
-
-<!-- قسم المخزون -->
-<div id="stock" class="section">
-  <h2>📦 إدارة المخزون</h2>
-  <div id="tableContainer"></div>
-  <button onclick="addProduct()">➕ إضافة منتج</button>
-</div>
-
-<!-- قسم البيع -->
-<div id="sell" class="section">
-  <h2>🛒 البيع</h2>
-  <input type="text" id="barcodeInput" placeholder="🔍 أدخل أو امسح الباركود" oninput="searchProduct(this.value)" autofocus>
-  <div id="saleInfo" style="display:none; background:#f9f9f9; border:1px solid #ccc; padding:10px; margin-top:10px;">
-    <p><strong>📦 المنتج:</strong> <span id="pName"></span></p>
-    <p><strong>💰 سعر الشراء:</strong> <span id="pBuy"></span> DA</p>
-    <p><strong>💵 سعر البيع:</strong> <input type="number" id="customSell" style="width:100px;"> DA</p>
-    <p><strong>📦 الكمية:</strong> <span id="pQty"></span></p>
-    <p><strong>📈 الربح:</strong> <span id="profit"></span> DA</p>
-    <button onclick="confirmSale()">✅ تأكيد البيع</button>
-  </div>
-
-  <h4>📜 سجل المبيعات</h4>
-  <table>
-    <thead>
-      <tr>
-        <th>المنتج</th>
-        <th>شراء</th>
-        <th>بيع</th>
-        <th>الربح</th>
-        <th>الوقت</th>
-      </tr>
-    </thead>
-    <tbody id="salesLog"></tbody>
-  </table>
-</div>
-
-<!-- قسم الإرجاع -->
-<div id="return" class="section">
-  <h2>🔁 إرجاع منتج</h2>
-  <input type="text" id="returnSearch" placeholder="🔍 ابحث بالباركود أو اسم المنتج" oninput="searchReturnProduct()">
-
-  <div id="returnInfo" style="display:none; margin-top:10px; border:1px solid #ccc; padding:10px;">
-    <p>📦 الاسم: <span id="returnName"></span></p>
-    <p>📦 الكمية الحالية: <span id="returnQty"></span></p>
-    <p>💸 سعر البيع عند البيع: <input type="number" id="returnSell" style="width:100px"> DA</p>
-    <button onclick="confirmReturn()">↩️ تأكيد الإرجاع</button>
-  </div>
-
-  <div id="returnResult" style="margin-top:10px; font-weight:bold;"></div>
-</div>
-
-<!-- قسم الزبائن والديون -->
-<div id="clients" class="section">
-  <h2>👥 الزبائن والديون</h2>
-  <div>
-    <input type="text" id="custName" placeholder="👤 اسم الزبون">
-    <input type="text" id="custPhone" placeholder="📞 رقم الهاتف">
-    <input type="text" id="custAddress" placeholder="📍 العنوان">
-    <input type="number" id="custTotal" placeholder="💰 السعر الإجمالي">
-    <input type="number" id="custPaid" placeholder="💵 المدفوع">
-    <button onclick="addCustomer()">➕ إضافة زبون</button>
-  </div>
-
-  <div id="customersList" style="margin-top: 20px;"></div>
-</div>
-
-<!-- قسم الإحصائيات -->
-<div id="stats" class="section">
-  <h2>📊 الإحصائيات</h2>
-  <div style="margin-top: 10px;">
-    <p>💰 الربح اليومي الصافي: <span id="dailyProfit">0</span> DA</p>
-    <p>📅 الربح الشهري التقريبي: <span id="monthlyProfit">0</span> DA</p>
-    <button onclick="resetDailyProfit()">🔄 إعادة تعيين الربح اليومي</button>
-  </div>
-</div>
-
-<!-- قسم الطباعة -->
-<div id="print" class="section">
-  <h2>🖨️ طباعة الباركود</h2>
-  <label>اختر المنتج:</label>
-  <select id="printProduct">
-    <option value="">-- اختر منتج --</option>
-  </select>
-
-  <label>عدد النسخ:</label>
-  <input type="number" id="printQty" min="1" value="1">
-
-  <button onclick="generateBarcodes()">📦 توليد</button>
-  <button onclick="window.print()">🖨️ طباعة</button>
-  <button onclick="document.getElementById('printArea').innerHTML=''">🗑️ مسح</button>
-
-  <div id="printArea" style="margin-top: 20px;"></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-<script>
-// متغيرات عامة
-let products = JSON.parse(localStorage.getItem("products") || "[]");
-let sales = JSON.parse(localStorage.getItem("sales") || "[]");
-let currentProduct = null;
-let returnProductIndex = -1;
-
-// وظائف عامة
-function showSection(id) {
-  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-  window.scrollTo(0, 0);
-  
-  // تحديث البيانات عند فتح القسم
-  if(id === 'stock') renderStock();
-  if(id === 'clients') loadCustomers();
-  if(id === 'stats') updateStats();
-  if(id === 'print') loadProductsForPrint();
-}
-
-function generateEAN13() {
-  let base = Math.floor(Math.random() * 100000000000).toString().padStart(12, '0');
-  let sum = 0;
-  for (let i = 0; i < 12; i++) {
-    sum += parseInt(base[i]) * (i % 2 === 0 ? 1 : 3);
-  }
-  let check = (10 - (sum % 10)) % 10;
-  return base + check;
-}
-
-// قسم إضافة المنتجات
-document.getElementById("productForm").addEventListener("submit", function(e) {
-  e.preventDefault();
-  let name = document.getElementById("productName").value.trim();
-  let buy = parseFloat(document.getElementById("buyPrice").value);
-  let sell = parseFloat(document.getElementById("sellPrice").value);
-  let qty = parseInt(document.getElementById("quantity").value);
-  let barcode = document.getElementById("barcode").value.trim() || generateEAN13();
-
-  let product = { name, buy, sell, qty, barcode };
-  products.push(product);
-  localStorage.setItem("products", JSON.stringify(products));
-
-  document.getElementById("addProductMsg").textContent = "✅ تم حفظ المنتج بنجاح!";
-  this.reset();
-});
-
-// قسم المخزون
-function renderStock() {
-  let html = `
-    <table>
-      <thead>
-        <tr>
-          <th>الاسم</th>
-          <th>شراء</th>
-          <th>بيع</th>
-          <th>الكمية</th>
-          <th>الباركود</th>
-          <th>تعديل</th>
-          <th>🗑️ حذف</th>
-        </tr>
-      </thead><tbody>`;
-
-  products.forEach((p, i) => {
-    html += `
-      <tr>
-        <td>${p.name}</td>
-        <td>${p.buy} DA</td>
-        <td>${p.sell} DA</td>
-        <td>${p.qty}</td>
-        <td>${p.barcode}</td>
-        <td><button onclick="editProduct(${i})">✏️</button></td>
-        <td><button onclick="deleteProduct(${i})">🗑️</button></td>
-      </tr>`;
-  });
-
-  html += "</tbody></table>";
-  document.getElementById("tableContainer").innerHTML = html;
-}
-
-function addProduct() {
-  showSection('add');
-}
-
-function deleteProduct(i) {
-  if (confirm("❌ هل تريد حذف هذا المنتج؟")) {
-    products.splice(i, 1);
-    localStorage.setItem("products", JSON.stringify(products));
-    renderStock();
-  }
-}
-
-function editProduct(i) {
-  const p = products[i];
-  const name = prompt("📦 اسم المنتج:", p.name);
-  const buy = prompt("💰 سعر الشراء:", p.buy);
-  const sell = prompt("💵 سعر البيع:", p.sell);
-  const qty = prompt("📦 الكمية:", p.qty);
-  if (name && buy && sell && qty) {
-    products[i] = {
-      ...p,
-      name,
-      buy: parseFloat(buy),
-      sell: parseFloat(sell),
-      qty: parseInt(qty)
-    };
-    localStorage.setItem("products", JSON.stringify(products));
-    renderStock();
-  }
-}
-
-// قسم البيع
-function searchProduct(code) {
-  const p = products.find(prod => prod.barcode === code || prod.name.includes(code));
-  if (p) {
-    currentProduct = p;
-    document.getElementById("saleInfo").style.display = "block";
-    document.getElementById("pName").textContent = p.name;
-    document.getElementById("pBuy").textContent = p.buy;
-    document.getElementById("customSell").value = p.sell;
-    document.getElementById("pQty").textContent = p.qty;
-    calculateProfit();
-  } else {
-    document.getElementById("saleInfo").style.display = "none";
-    currentProduct = null;
-  }
-}
-
-document.getElementById("customSell").oninput = calculateProfit;
-
-function calculateProfit() {
-  if (!currentProduct) return;
-  const sell = parseFloat(document.getElementById("customSell").value);
-  const profit = sell - currentProduct.buy;
-  document.getElementById("profit").textContent = profit.toFixed(2);
-}
-
-function confirmSale() {
-  if (!currentProduct) return;
-  const sell = parseFloat(document.getElementById("customSell").value);
-  const profit = sell - currentProduct.buy;
-  const time = new Date().toLocaleString();
-
-  const i = products.findIndex(p => p.barcode === currentProduct.barcode);
-  if (products[i].qty <= 0) return alert("❌ لا توجد كمية كافية!");
-  products[i].qty -= 1;
-  localStorage.setItem("products", JSON.stringify(products));
-
-  sales.push({ name: currentProduct.name, buy: currentProduct.buy, sell, profit, time });
-  localStorage.setItem("sales", JSON.stringify(sales));
-
-  let dp = parseFloat(localStorage.getItem("dailyProfit") || "0");
-  dp += profit;
-  localStorage.setItem("dailyProfit", dp);
-
-  alert("✅ تم البيع!");
-  currentProduct = null;
-  document.getElementById("barcodeInput").value = "";
-  document.getElementById("saleInfo").style.display = "none";
-  loadSales();
-}
-
-function loadSales() {
-  const tbody = document.getElementById("salesLog");
-  tbody.innerHTML = "";
-  sales.slice().reverse().forEach(s => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${s.name}</td>
-        <td>${s.buy}</td>
-        <td>${s.sell}</td>
-        <td>${s.profit}</td>
-        <td>${s.time}</td>
-      </tr>`;
-  });
-}
-
-// قسم الإرجاع
-function searchReturnProduct() {
-  const val = document.getElementById("returnSearch").value.trim();
-  const foundIndex = products.findIndex(p => p.barcode === val || p.name.includes(val));
-
-  if (foundIndex !== -1) {
-    const product = products[foundIndex];
-    returnProductIndex = foundIndex;
-    document.getElementById("returnName").innerText = product.name;
-    document.getElementById("returnQty").innerText = product.qty;
-    document.getElementById("returnSell").value = product.sell;
-    document.getElementById("returnInfo").style.display = "block";
-  } else {
-    document.getElementById("returnInfo").style.display = "none";
-  }
-}
-
-function confirmReturn() {
-  if (returnProductIndex === -1) return;
-  const prod = products[returnProductIndex];
-
-  const sellBack = parseFloat(document.getElementById("returnSell").value);
-  prod.qty += 1;
-  localStorage.setItem("products", JSON.stringify(products));
-
-  let totalProfit = parseFloat(localStorage.getItem("dailyProfit") || "0");
-  totalProfit -= sellBack;
-  localStorage.setItem("dailyProfit", totalProfit);
-
-  let logs = JSON.parse(localStorage.getItem("salesLog") || "[]");
-  const logEntry = `${new Date().toLocaleTimeString()} - ⛔ إرجاع ${prod.name} - خصم ${sellBack.toFixed(2)} DA من الربح`;
-  logs.unshift(logEntry);
-  localStorage.setItem("salesLog", JSON.stringify(logs));
-
-  document.getElementById("returnResult").innerText = `↩️ تم إرجاع ${prod.name} | -${sellBack.toFixed(2)} DA من الربح`;
-  searchReturnProduct();
-}
-
-// قسم الزبائن والديون
-function loadCustomers() {
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
-  let html = "";
-  customers.forEach((cust, i) => {
-    const remaining = cust.total - cust.paid;
-    html += `
-      <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-        <strong>👤 ${cust.name}</strong><br>
-        📞 ${cust.phone}<br>
-        📍 ${cust.address}<br>
-        💰 السعر الإجمالي: ${cust.total} DA<br>
-        💵 المدفوع: ${cust.paid} DA<br>
-        🧾 الباقي: ${remaining} DA<br>
-        <button onclick="editCustomer(${i})">✏️ تعديل</button>
-        <button onclick="deleteCustomer(${i})">🗑️ حذف</button>
-        ${remaining > 0 ? `<button onclick="recoverDebt(${i})">💵 استرجاع الدين</button>` : "✅ مكتمل"}
-      </div>
-    `;
-  });
-  document.getElementById("customersList").innerHTML = html;
-}
-
-function addCustomer() {
-  const name = document.getElementById("custName").value.trim();
-  const phone = document.getElementById("custPhone").value.trim();
-  const address = document.getElementById("custAddress").value.trim();
-  const total = parseFloat(document.getElementById("custTotal").value);
-  const paid = parseFloat(document.getElementById("custPaid").value);
-
-  if (!name || isNaN(total) || isNaN(paid)) return alert("يرجى ملء كل الحقول بشكل صحيح");
-
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
-  customers.push({ name, phone, address, total, paid });
-  localStorage.setItem("customers", JSON.stringify(customers));
-  loadCustomers();
-}
-
-function deleteCustomer(index) {
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
-  if (confirm("❌ هل تريد حذف هذا الزبون؟")) {
-    customers.splice(index, 1);
-    localStorage.setItem("customers", JSON.stringify(customers));
-    loadCustomers();
-  }
-}
-
-function editCustomer(index) {
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
-  const c = customers[index];
-  const name = prompt("✏️ اسم الزبون:", c.name);
-  const phone = prompt("📞 رقم الهاتف:", c.phone);
-  const address = prompt("📍 العنوان:", c.address);
-  const total = parseFloat(prompt("💰 السعر الإجمالي:", c.total));
-  const paid = parseFloat(prompt("💵 المدفوع:", c.paid));
-
-  if (!name || isNaN(total) || isNaN(paid)) return alert("البيانات غير صحيحة");
-
-  customers[index] = { name, phone, address, total, paid };
-  localStorage.setItem("customers", JSON.stringify(customers));
-  loadCustomers();
-}
-
-function recoverDebt(index) {
-  const customers = JSON.parse(localStorage.getItem("customers") || "[]");
-  const c = customers[index];
-  const remaining = c.total - c.paid;
-  const amount = parseFloat(prompt("💵 كم المبلغ الذي تم دفعه الآن؟", remaining));
-  if (isNaN(amount) || amount <= 0) return alert("المبلغ غير صحيح");
-
-  customers[index].paid += amount;
-  if (customers[index].paid > customers[index].total) {
-    customers[index].paid = customers[index].total;
-  }
-
-  localStorage.setItem("customers", JSON.stringify(customers));
-
-  let dailyProfit = parseFloat(localStorage.getItem("dailyProfit") || "0");
-  dailyProfit += amount;
-  localStorage.setItem("dailyProfit", dailyProfit);
-
-  loadCustomers();
-}
-
-// قسم الإحصائيات
-function updateStats() {
-  const daily = parseFloat(localStorage.getItem("dailyProfit") || "0");
-  const monthly = daily * new Date().getDate(); // التقدير الشهري حسب الأيام الحالية
-  document.getElementById("dailyProfit").innerText = daily.toFixed(2);
-  document.getElementById("monthlyProfit").innerText = monthly.toFixed(2);
-}
-
-function resetDailyProfit() {
-  if (confirm("❓ هل أنت متأكد أنك تريد تصفير الربح اليومي؟")) {
-    localStorage.setItem("dailyProfit", "0");
-    updateStats();
-  }
-}
-
-// قسم الطباعة
-function loadProductsForPrint() {
-  const select = document.getElementById("printProduct");
-  select.innerHTML = '<option value="">-- اختر منتج --</option>';
-  
-  products.forEach(p => {
-    let option = document.createElement("option");
-    option.value = p.barcode;
-    option.textContent = p.name;
-    select.appendChild(option);
-  });
-}
-
-function generateBarcodes() {
-  const barcode = document.getElementById("printProduct").value;
-  const qty = parseInt(document.getElementById("printQty").value);
-  const container = document.getElementById("printArea");
-
-  if (!barcode || qty < 1) {
-    alert("❗ اختر منتج وعدد صحيح");
-    return;
-  }
-
-  const product = products.find(p => p.barcode === barcode);
-  if (!product) {
-    alert("❌ المنتج غير موجود");
-    return;
-  }
-
-  container.innerHTML = "";
-
-  for (let i = 0; i < qty; i++) {
-    const box = document.createElement("div");
-    box.style.border = "1px solid #000";
-    box.style.textAlign = "center";
-    box.style.padding = "5px";
-    box.style.margin = "5px";
-    box.style.display = "inline-block";
-    box.style.width = "180px";
-
-    box.innerHTML = `
-      <div style="font-weight:bold;color:#2c3e50">BAZAR SERDANI</div>
-      <div style="margin:5px 0">Prix: ${formatPrice(product.sell)} DA</div>
-      <svg class="barcode" data-code="${product.barcode}"></svg>
-      <div>${product.barcode}</div>
-    `;
-
-    container.appendChild(box);
-  }
-
-  document.querySelectorAll(".barcode").forEach(svg => {
-    JsBarcode(svg, svg.dataset.code, {
-      format: "EAN13",
-      displayValue: false,
-      width: 2,
-      height: 40
-    });
-  });
-}
-
-function formatPrice(p) {
-  let s = Math.round(p).toString();
-  return s.length > 3 ? s.slice(0, -3) + " " + s.slice(-3) : s;
-}
-
-// تهيئة أولية
-document.addEventListener("DOMContentLoaded", function() {
-  loadSales();
-  updateStats();
-  loadProductsForPrint();
-  
-  // إضافة حدث Enter لحقل البحث في الإرجاع
-  document.getElementById("returnSearch").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-      searchReturnProduct();
-    }
-  });
-});
-</script>
+    <div class="container">
+        <header>
+            <div class="logo">BAZAR SERDANI</div>
+            <div class="current-page" id="current-page">الصفحة الرئيسية</div>
+        </header>
+        
+        <nav class="nav-menu">
+            <a href="#" data-section="home">الصفحة الرئيسية</a>
+            <a href="#" data-section="barcode">طباعة الباركود</a>
+            <a href="#" data-section="add-product">إضافة منتج</a>
+            <a href="#" data-section="inventory">المخزون</a>
+            <a href="#" data-section="sales">المبيعات</a>
+            <a href="#" data-section="debts">الديون</a>
+        </nav>
+        
+        <div class="main-content">
+            <!-- قسم الصفحة الرئيسية -->
+            <section id="home" class="section active">
+                <h2 class="section-title">الصفحة الرئيسية</h2>
+                <p>مرحبًا بك في نظام إدارة متجر BAZAR SERDANI</p>
+                <div class="stats">
+                    <div>عدد المنتجات: <span id="products-count">0</span></div>
+                    <div>إجمالي المبيعات اليوم: <span id="today-sales">0</span> دج</div>
+                </div>
+            </section>
+            
+            <!-- قسم طباعة الباركود -->
+            <section id="barcode" class="section">
+                <h2 class="section-title">طباعة الباركود</h2>
+                
+                <div class="form-group">
+                    <label for="product-select">اختر المنتج:</label>
+                    <select id="product-select">
+                        <option value="">-- اختر منتج --</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="copy-count">عدد النسخ:</label>
+                    <input type="number" id="copy-count" value="1" min="1">
+                </div>
+                
+                <button id="generate-btn">توليد طباعة</button>
+                <button id="print-btn" class="no-print">طباعة</button>
+                <button id="clear-btn" class="no-print">مسح</button>
+                
+                <div id="barcode-container" class="barcode-container"></div>
+            </section>
+            
+            <!-- قسم إضافة منتج -->
+            <section id="add-product" class="section">
+                <h2 class="section-title">إضافة منتج</h2>
+                
+                <div class="form-group">
+                    <label for="product-id">رقم المنتج:</label>
+                    <input type="text" id="product-id" placeholder="أدخل رقم المنتج">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-name">اسم المنتج:</label>
+                    <input type="text" id="product-name" placeholder="أدخل اسم المنتج">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-price">السعر (دج):</label>
+                    <input type="number" id="product-price" placeholder="أدخل السعر">
+                </div>
+                
+                <div class="form-group">
+                    <label for="product-quantity">الكمية:</label>
+                    <input type="number" id="product-quantity" value="1" min="1">
+                </div>
+                
+                <button id="save-product">حفظ المنتج</button>
+            </section>
+            
+            <!-- قسم المخزون -->
+            <section id="inventory" class="section">
+                <h2 class="section-title">المخزون</h2>
+                <div class="form-group">
+                    <input type="text" id="inventory-search" placeholder="ابحث عن منتج...">
+                </div>
+                <table id="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>رقم المنتج</th>
+                            <th>اسم المنتج</th>
+                            <th>السعر</th>
+                            <th>الكمية</th>
+                            <th>تعديل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- سيتم ملؤه بالبيانات -->
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- قسم المبيعات -->
+            <section id="sales" class="section">
+                <h2 class="section-title">المبيعات</h2>
+                <div id="sales-stats">
+                    <div>إجمالي المبيعات اليوم: <span id="daily-sales">0</span> دج</div>
+                    <div>إجمالي المبيعات الشهرية: <span id="monthly-sales">0</span> دج</div>
+                </div>
+                <table id="sales-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ</th>
+                            <th>رقم الفاتورة</th>
+                            <th>المبلغ</th>
+                            <th>التفاصيل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- سيتم ملؤه بالبيانات -->
+                    </tbody>
+                </table>
+            </section>
+            
+            <!-- قسم الديون -->
+            <section id="debts" class="section">
+                <h2 class="section-title">الديون</h2>
+                <div class="form-group">
+                    <input type="text" id="debt-search" placeholder="ابحث عن عميل...">
+                </div>
+                <table id="debts-table">
+                    <thead>
+                        <tr>
+                            <th>اسم العميل</th>
+                            <th>المبلغ</th>
+                            <th>التاريخ</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- سيتم ملؤه بالبيانات -->
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // بيانات التطبيق
+        let products = [
+            { id: '001', name: 'Gandora', price: 1000, quantity: 10 },
+            { id: '002', name: 'منتج 2', price: 1500, quantity: 5 },
+            { id: '003', name: 'منتج 3', price: 2000, quantity: 8 }
+        ];
+        
+        let sales = [];
+        let debts = [];
+        
+        // تهيئة التطبيق عند التحميل
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+            loadSales();
+            loadDebts();
+            updateStats();
+            setupNavigation();
+        });
+        
+        // تكوين نظام التنقل بين الأقسام
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-menu a');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                    
+                    // تحديث عنوان الصفحة الحالية
+                    document.getElementById('current-page').textContent = this.textContent;
+                });
+            });
+        }
+        
+        // عرض القسم المحدد وإخفاء الآخرين
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+        }
+        
+        // تحميل المنتجات في القائمة المنسدلة
+        function loadProducts() {
+            const select = document.getElementById('product-select');
+            select.innerHTML = '<option value="">-- اختر منتج --</option>';
+            
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                option.textContent = `${product.id} - ${product.name}`;
+                select.appendChild(option);
+            });
+            
+            // تحديث جدول المخزون
+            updateInventoryTable();
+            
+            // تحديث الإحصاءات
+            document.getElementById('products-count').textContent = products.length;
+        }
+        
+        // تحديث جدول المخزون
+        function updateInventoryTable() {
+            const tbody = document.querySelector('#inventory-table tbody');
+            tbody.innerHTML = '';
+            
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td>${product.name}</td>
+                    <td>${product.price} دج</td>
+                    <td>${product.quantity}</td>
+                    <td><button class="edit-product" data-id="${product.id}">تعديل</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // توليد الباركود
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const productId = document.getElementById('product-select').value;
+            const copies = parseInt(document.getElementById('copy-count').value);
+            
+            if (!productId || copies < 1) {
+                alert('الرجاء اختيار منتج وإدخال عدد النسخ');
+                return;
+            }
+            
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const container = document.getElementById('barcode-container');
+            container.innerHTML = '';
+            
+            for (let i = 0; i < copies; i++) {
+                const barcodeDiv = document.createElement('div');
+                barcodeDiv.className = 'barcode-label';
+                barcodeDiv.innerHTML = `
+                    <div>BAZAR SERDANI</div>
+                    <img src="https://barcode.tec-it.com/barcode.ashx?data=${productId}&code=Code128&dpi=96" 
+                         class="barcode-img"
+                         alt="باركود ${product.name}">
+                    <div>Prix: ${product.price} DA</div>
+                    <div>${productId}</div>
+                `;
+                container.appendChild(barcodeDiv);
+            }
+        });
+        
+        // طباعة الباركود
+        document.getElementById('print-btn').addEventListener('click', function() {
+            window.print();
+        });
+        
+        // مسح الباركود
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            document.getElementById('barcode-container').innerHTML = '';
+        });
+        
+        // إضافة منتج جديد
+        document.getElementById('save-product').addEventListener('click', function() {
+            const id = document.getElementById('product-id').value;
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const quantity = parseInt(document.getElementById('product-quantity').value);
+            
+            if (!id || !name || isNaN(price) || isNaN(quantity)) {
+                alert('الرجاء ملء جميع الحقول بشكل صحيح');
+                return;
+            }
+            
+            // التحقق من عدم وجود منتج بنفس الرقم
+            if (products.some(p => p.id === id)) {
+                alert('رقم المنتج موجود مسبقاً');
+                return;
+            }
+            
+            const newProduct = { id, name, price, quantity };
+            products.push(newProduct);
+            
+            // تحديث الواجهة
+            loadProducts();
+            
+            // مسح حقول الإدخال
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-quantity').value = '1';
+            
+            alert('تم إضافة المنتج بنجاح');
+        });
+        
+        // تحميل بيانات المبيعات
+        function loadSales() {
+            // هنا يمكن جلب البيانات من قاعدة البيانات أو API
+            sales = [
+                { date: '2023-05-01', invoice: 'INV001', amount: 4500, details: 'Gandora x3' },
+                { date: '2023-05-02', invoice: 'INV002', amount: 3000, details: 'منتج 2 x2' }
+            ];
+            
+            updateSalesTable();
+        }
+        
+        // تحديث جدول المبيعات
+        function updateSalesTable() {
+            const tbody = document.querySelector('#sales-table tbody');
+            tbody.innerHTML = '';
+            
+            sales.forEach(sale => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sale.date}</td>
+                    <td>${sale.invoice}</td>
+                    <td>${sale.amount} دج</td>
+                    <td>${sale.details}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // حساب إجمالي المبيعات
+            const dailyTotal = sales.reduce((sum, sale) => sum + sale.amount, 0);
+            document.getElementById('daily-sales').textContent = dailyTotal;
+            document.getElementById('today-sales').textContent = dailyTotal;
+            document.getElementById('monthly-sales').textContent = dailyTotal * 30; // مثال فقط
+        }
+        
+        // تحميل بيانات الديون
+        function loadDebts() {
+            // هنا يمكن جلب البيانات من قاعدة البيانات أو API
+            debts = [
+                { customer: 'عميل 1', amount: 2000, date: '2023-04-15', status: 'غير مسدد' },
+                { customer: 'عميل 2', amount: 1500, date: '2023-04-20', status: 'مسدد جزئياً' }
+            ];
+            
+            updateDebtsTable();
+        }
+        
+        // تحديث جدول الديون
+        function updateDebtsTable() {
+            const tbody = document.querySelector('#debts-table tbody');
+            tbody.innerHTML = '';
+            
+            debts.forEach(debt => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${debt.customer}</td>
+                    <td>${debt.amount} دج</td>
+                    <td>${debt.date}</td>
+                    <td>${debt.status}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // تحديث الإحصاءات
+        function updateStats() {
+            document.getElementById('products-count').textContent = products.length;
+            
+            const dailyTotal = sales.reduce((sum, sale) => sum + sale.amount, 0);
+            document.getElementById('today-sales').textContent = dailyTotal;
+        }
+    </script>
 </body>
-</html># bazar_serdani.html
+</html>
